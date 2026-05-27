@@ -5,6 +5,7 @@ import com.food.recipeflow.service.RecipeService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -29,13 +30,13 @@ public class RecipeController {
     }
 
     @PostMapping
-    public Recipe addRecipe(@Valid @RequestBody Recipe recipe) {
-        return recipeService.addRecipe(recipe);
+    public Recipe addRecipe(@Valid @RequestBody Recipe recipe, Principal principal) {
+        return recipeService.addRecipe(recipe, principal.getName());
     }
 
     @PostMapping("/bulk")
-    public List<Recipe> addRecipes(@Valid @RequestBody List<Recipe> recipes) {
-        return recipeService.addRecipes(recipes);
+    public List<Recipe> addRecipes(@Valid @RequestBody List<Recipe> recipes, Principal principal) {
+        return recipeService.addRecipes(recipes, principal.getName());
     }
 
     @PutMapping("{id}")

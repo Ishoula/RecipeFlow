@@ -1,7 +1,9 @@
 package com.food.recipeflow.service;
 
 import com.food.recipeflow.entity.Recipe;
+import com.food.recipeflow.entity.User;
 import com.food.recipeflow.repository.RecipeRepository;
+import com.food.recipeflow.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,20 +13,28 @@ import java.util.Optional;
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
+    private final UserRepository userRepository;
 
-    public RecipeService(RecipeRepository recipeRepository) {
+    public RecipeService(RecipeRepository recipeRepository, UserRepository userRepository) {
         this.recipeRepository = recipeRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Recipe> getAllRecipes() {
         return recipeRepository.findAll();
     }
 
-    public Recipe addRecipe(Recipe recipe) {
+    public Recipe addRecipe(Recipe recipe, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        recipe.setUser(user);
         return recipeRepository.save(recipe);
     }
 
-    public List<Recipe> addRecipes(List<Recipe> recipes) {
+    public List<Recipe> addRecipes(List<Recipe> recipes, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        recipes.forEach(recipe -> recipe.setUser(user));
         return recipeRepository.saveAll(recipes);
     }
 
