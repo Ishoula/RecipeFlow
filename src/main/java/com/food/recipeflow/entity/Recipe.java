@@ -54,8 +54,32 @@ public class Recipe {
     @NotEmpty
     private List<String> tags;
 
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long views = 0L;
+
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long likes = 0L;
+
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long dislikes = 0L;
+
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long comments = 0L;
+
+    @PrePersist
+    @PreUpdate
+    private void defaultCounters() {
+        if (views == null) {
+            views = 0L;
+        }
+        if (likes == null) {
+            likes = 0L;
+        }
+        if (dislikes == null) {
+            dislikes = 0L;
+        }
+        if (comments == null) {
+            comments = 0L;
+        }
+    }
 }

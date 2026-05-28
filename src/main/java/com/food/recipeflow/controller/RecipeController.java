@@ -60,7 +60,7 @@ public class RecipeController {
         return recipeService.dislikeRecipe(id);
     }
 
-    @PostMapping("{id}/comment")
+    @PostMapping({"{id}/comment", "{id}/comments"})
     public Recipe addComment(@PathVariable Long id) {
         return recipeService.addComment(id);
     }

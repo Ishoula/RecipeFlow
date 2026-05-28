@@ -53,10 +53,18 @@ public class RecipeService {
                     rec.setInstructions(recipe.getInstructions());
                     rec.setTags(recipe.getTags());
 
-                    rec.setLikes(recipe.getLikes());
-                    rec.setDislikes(recipe.getDislikes());
-                    rec.setComments(recipe.getComments());
-                    rec.setViews(recipe.getViews());
+                    if (recipe.getLikes() != null) {
+                        rec.setLikes(recipe.getLikes());
+                    }
+                    if (recipe.getDislikes() != null) {
+                        rec.setDislikes(recipe.getDislikes());
+                    }
+                    if (recipe.getComments() != null) {
+                        rec.setComments(recipe.getComments());
+                    }
+                    if (recipe.getViews() != null) {
+                        rec.setViews(recipe.getViews());
+                    }
 
                     return recipeRepository.save(rec);
                 })
