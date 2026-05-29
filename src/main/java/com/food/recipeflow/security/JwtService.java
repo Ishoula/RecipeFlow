@@ -17,6 +17,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
+    // Generate token
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -26,24 +27,33 @@ public class JwtService {
                 .compact();
     }
 
+    // Extract username
     public String extractUsername(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    // Validate token fully (IMPORTANT FIX)
+    public boolean isValid(String token, String username) {
+        try {
+            String extractedUsername = extractUsername(token);
+            return extractedUsername.equals(username) && !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Check expiration
+    private boolean isTokenExpired(String token) {
+        Date expiration = getClaims(token).getExpiration();
+        return expiration.before(new Date());
+    }
+
+    // Central parsing method
+    private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-
-    public boolean isValid(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+                .getBody();
     }
 }

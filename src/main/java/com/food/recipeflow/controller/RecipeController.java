@@ -35,7 +35,7 @@ public class RecipeController {
     }
 
     @PostMapping("/bulk")
-    public List<Recipe> addRecipes(@Valid @RequestBody List<Recipe> recipes, Principal principal) {
+    public List<Recipe> addRecipes(@RequestBody List<Recipe> recipes, Principal principal) {
         return recipeService.addRecipes(recipes, principal.getName());
     }
 
