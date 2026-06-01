@@ -2,7 +2,11 @@ FROM eclipse-temurin:21-jdk-jammy
 
 WORKDIR /app
 
-COPY target/recipeflow-0.0.1-SNAPSHOT.jar app.jar
+COPY . .
+
+RUN ./mvnw clean package -DskipTests
+
+RUN cp target/*.jar app.jar
 
 EXPOSE 8080
 
