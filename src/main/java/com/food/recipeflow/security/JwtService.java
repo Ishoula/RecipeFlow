@@ -12,9 +12,14 @@ public class JwtService {
 
     private static final String SECRET = "my-super-secret-key-my-super-secret-key";
     private static final long EXPIRATION = 1000 * 60 * 60 * 24; // 24h
+    private final Key signingKey;
+
+    public JwtService() {
+        this.signingKey = Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return signingKey;
     }
 
     // Generate token

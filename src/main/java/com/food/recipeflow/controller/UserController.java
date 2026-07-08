@@ -23,21 +23,22 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public UserController(UserService userService, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtService jwtService){
-        this.userService=userService;
-        this.authenticationManager=authenticationManager;
-        this.passwordEncoder=passwordEncoder;
-        this.jwtService=jwtService;
+    public UserController(UserService userService, AuthenticationManager authenticationManager,
+            PasswordEncoder passwordEncoder, JwtService jwtService) {
+        this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
-    public UserResponse registerUser(@RequestBody SignupRequest signupRequest){
+    public UserResponse registerUser(@RequestBody SignupRequest signupRequest) {
 
-        if(userService.findByEmail(signupRequest.getEmail()).isPresent()){
+        if (userService.findByEmail(signupRequest.getEmail()).isPresent()) {
             throw new RuntimeException("Email not available");
         }
 
-        if(userService.findByUsername(signupRequest.getUsername()).isPresent()){
+        if (userService.findByUsername(signupRequest.getUsername()).isPresent()) {
             throw new RuntimeException("Username not availabel");
         }
 
@@ -52,23 +53,19 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 
+        User user = userService.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        User user = userService.findByUsername(loginRequest.getUsername())
-                .orElseThrow();
+                        loginRequest.getPassword()));
 
         String token = jwtService.generateToken(user.getUsername());
 
         return ResponseEntity.ok(
                 Map.of(
                         "token", token,
-                        "user", new UserResponse(user.getId(), user.getUsername(), user.getEmail())
-                )
-        );
+                        "user", new UserResponse(user.getId(), user.getUsername(), user.getEmail())));
     }
 }
