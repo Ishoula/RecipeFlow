@@ -21,7 +21,8 @@ public class RecipeScheduler {
 
     }
 
-    @Scheduled
+    // Disabled for performance, uncomment and configure if needed
+    // @Scheduled(fixedRate = 3600000) // Example: every 1 hour
     public void yourRecipes(){
 
         List<User> users=userRepository.findAll();

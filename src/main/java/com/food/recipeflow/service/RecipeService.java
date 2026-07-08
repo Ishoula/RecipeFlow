@@ -80,29 +80,20 @@ public class RecipeService {
     }
 
     public Recipe likeRecipe(Long id) {
+        recipeRepository.incrementLikes(id);
         return recipeRepository.findById(id)
-                .map(recipe -> {
-                    recipe.setLikes(recipe.getLikes() + 1);
-                    return recipeRepository.save(recipe);
-                })
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
     }
 
     public Recipe dislikeRecipe(Long id) {
+        recipeRepository.incrementDislikes(id);
         return recipeRepository.findById(id)
-                .map(recipe -> {
-                    recipe.setDislikes(recipe.getDislikes() + 1);
-                    return recipeRepository.save(recipe);
-                })
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
     }
 
     public Recipe addComment(Long id) {
+        recipeRepository.incrementComments(id);
         return recipeRepository.findById(id)
-                .map(recipe -> {
-                    recipe.setComments(recipe.getComments() + 1);
-                    return recipeRepository.save(recipe);
-                })
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
     }
 }

@@ -8,7 +8,10 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "recipes")
+@Table(name = "recipes", indexes = {
+        @Index(name = "idx_recipe_category", columnList = "category"),
+        @Index(name = "idx_recipe_user_id", columnList = "user_id")
+})
 @Getter
 @Setter
 @AllArgsConstructor
