@@ -1,16 +1,16 @@
 package com.food.recipeflow.controller;
 
-import com.food.recipeflow.dto.SignupRequest;
-import com.food.recipeflow.dto.UserResponse;
+import com.food.recipeflow.dto.*;
 import com.food.recipeflow.entity.User;
+import com.food.recipeflow.service.OtpService;
 import com.food.recipeflow.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.*;
 
-import com.food.recipeflow.dto.LoginRequest;
 import com.food.recipeflow.security.JwtService;
 
 import java.util.Map;
@@ -22,13 +22,15 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final OtpService otpService;
 
     public UserController(UserService userService, AuthenticationManager authenticationManager,
-            PasswordEncoder passwordEncoder, JwtService jwtService) {
+            PasswordEncoder passwordEncoder, JwtService jwtService, OtpService otpService) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.otpService = otpService;
     }
 
     @PostMapping("/register")
@@ -67,5 +69,17 @@ public class UserController {
                 Map.of(
                         "token", token,
                         "user", new UserResponse(user.getId(), user.getUsername(), user.getEmail())));
+    }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<Map<String, String>> sendOtp(@Valid @RequestBody SendOtpRequest request) {
+        otpService.sendOtp(request.getEmail());
+        return ResponseEntity.ok(Map.of("message", "OTP sent successfully"));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<Map<String, String>> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+        otpService.verifyOtp(request.getEmail(), request.getOtp());
+        return ResponseEntity.ok(Map.of("message", "Email verified successfully"));
     }
 }

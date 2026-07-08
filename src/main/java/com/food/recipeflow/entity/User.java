@@ -35,4 +35,7 @@ public class User {
     @Size(min = 6)
     @JsonIgnore
     private String password;
+
+    @Column(nullable = false)
+    private Boolean verified = false;
 }
