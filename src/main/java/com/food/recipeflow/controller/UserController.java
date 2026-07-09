@@ -49,7 +49,8 @@ public class UserController {
         user.setEmail(signupRequest.getEmail());
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         User savedUser = userService.saveUser(user);
-        return new UserResponse(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail());
+        return new UserResponse(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail(),
+                savedUser.getVerified());
     }
 
     @PostMapping("/login")
@@ -57,6 +58,10 @@ public class UserController {
 
         User user = userService.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+
+        if (!user.getVerified()) {
+            throw new RuntimeException("Please verify your email before logging in");
+        }
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -68,7 +73,8 @@ public class UserController {
         return ResponseEntity.ok(
                 Map.of(
                         "token", token,
-                        "user", new UserResponse(user.getId(), user.getUsername(), user.getEmail())));
+                        "user",
+                        new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getVerified())));
     }
 
     @PostMapping("/send-otp")
