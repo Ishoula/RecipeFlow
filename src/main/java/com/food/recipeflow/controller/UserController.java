@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public UserResponse registerUser(@RequestBody SignupRequest signupRequest) {
+    public UserResponse registerUser(@Valid @RequestBody SignupRequest signupRequest) {
 
         if (userService.findByEmail(signupRequest.getEmail()).isPresent()) {
             throw new RuntimeException("Email not available");
