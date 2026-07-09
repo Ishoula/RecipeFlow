@@ -1,6 +1,9 @@
 package com.food.recipeflow.repository;
 
 import com.food.recipeflow.entity.Recipe;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +18,12 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     List<Recipe> findByCategoryIgnoreCase(String category);
     List<Recipe> findByNameContainingIgnoreCaseAndCategoryIgnoreCase(String name, String category);
     List<Recipe> findByUserId(Long userId);
+
+    @EntityGraph(attributePaths = {"equipments", "ingredients", "instructions", "tags"})
+    Page<Recipe> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"equipments", "ingredients", "instructions", "tags"})
+    List<Recipe> findAll();
 
     @Modifying
     @Transactional
