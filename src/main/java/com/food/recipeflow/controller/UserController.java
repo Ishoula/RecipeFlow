@@ -49,6 +49,9 @@ public class UserController {
         user.setEmail(signupRequest.getEmail());
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         User savedUser = userService.saveUser(user);
+
+        otpService.sendOtp(savedUser.getEmail());
+
         return new UserResponse(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail(),
                 savedUser.getVerified());
     }
