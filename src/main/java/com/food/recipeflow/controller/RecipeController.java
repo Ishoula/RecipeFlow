@@ -24,19 +24,24 @@ public class RecipeController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Recipe>> getAllRecipes(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+    public ResponseEntity<?> getAllRecipes(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(recipeService.getAllRecipes(pageable));
+        if (page != null && size != null) {
+            Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                    : Sort.by(sortBy).descending();
+            Pageable pageable = PageRequest.of(page, size, sort);
+            return ResponseEntity.ok(recipeService.getAllRecipes(pageable));
+        } else {
+            return ResponseEntity.ok(recipeService.getAllRecipes());
+        }
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
-        Recipe recipe =recipeService.getRecipeById(id)
+        Recipe recipe = recipeService.getRecipeById(id)
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
 
         return ResponseEntity.ok(recipe);
@@ -44,19 +49,19 @@ public class RecipeController {
 
     @PostMapping
     public ResponseEntity<Recipe> addRecipe(@Valid @RequestBody Recipe recipe, Principal principal) {
-        Recipe createdRecipe= recipeService.addRecipe(recipe, principal.getName());
+        Recipe createdRecipe = recipeService.addRecipe(recipe, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRecipe);
     }
 
     @PostMapping("/bulk")
     public ResponseEntity<List<Recipe>> addRecipes(@RequestBody List<Recipe> recipes, Principal principal) {
-        List<Recipe> createdRecipes= recipeService.addRecipes(recipes, principal.getName());
+        List<Recipe> createdRecipes = recipeService.addRecipes(recipes, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRecipes);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Recipe> updateRecipe(@PathVariable Long id, @Valid @RequestBody Recipe recipe) {
-        Recipe editedRecipe= recipeService.editRecipe(recipe, id);
+        Recipe editedRecipe = recipeService.editRecipe(recipe, id);
         return ResponseEntity.ok(editedRecipe);
     }
 
@@ -76,7 +81,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.dislikeRecipe(id));
     }
 
-    @PostMapping({"{id}/comment", "{id}/comments"})
+    @PostMapping({ "{id}/comment", "{id}/comments" })
     public ResponseEntity<Recipe> addComment(@PathVariable Long id) {
         return ResponseEntity.ok(recipeService.addComment(id));
     }

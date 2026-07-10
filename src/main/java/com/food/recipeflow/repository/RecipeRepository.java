@@ -19,12 +19,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     List<Recipe> findByNameContainingIgnoreCaseAndCategoryIgnoreCase(String name, String category);
     List<Recipe> findByUserId(Long userId);
 
-    @EntityGraph(attributePaths = {"equipments", "ingredients", "instructions", "tags"})
-    Page<Recipe> findAll(Pageable pageable);
-
-    @EntityGraph(attributePaths = {"equipments", "ingredients", "instructions", "tags"})
-    List<Recipe> findAll();
-
     @Modifying
     @Transactional
     @Query("UPDATE Recipe r SET r.likes = r.likes + 1 WHERE r.id = :id")

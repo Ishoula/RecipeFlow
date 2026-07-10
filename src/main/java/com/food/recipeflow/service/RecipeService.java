@@ -24,12 +24,17 @@ public class RecipeService {
         this.userRepository = userRepository;
     }
 
-    @Cacheable(value = "recipes", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort")
+    @Cacheable(value = "recipes-list")
+    public List<Recipe> getAllRecipes() {
+        return recipeRepository.findAll();
+    }
+
+    @Cacheable(value = "recipes-page", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort")
     public Page<Recipe> getAllRecipes(Pageable pageable) {
         return recipeRepository.findAll(pageable);
     }
 
-    @CacheEvict(value = "recipes", allEntries = true)
+    @CacheEvict(value = { "recipes-list", "recipes-page" }, allEntries = true)
     public Recipe addRecipe(Recipe recipe, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -37,7 +42,7 @@ public class RecipeService {
         return recipeRepository.save(recipe);
     }
 
-    @CacheEvict(value = "recipes", allEntries = true)
+    @CacheEvict(value = { "recipes-list", "recipes-page" }, allEntries = true)
     public List<Recipe> addRecipes(List<Recipe> recipes, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -45,7 +50,7 @@ public class RecipeService {
         return recipeRepository.saveAll(recipes);
     }
 
-    @CacheEvict(value = "recipes", allEntries = true)
+    @CacheEvict(value = { "recipes-list", "recipes-page" }, allEntries = true)
     public Recipe editRecipe(Recipe recipe, Long id) {
         return recipeRepository.findById(id)
                 .map(rec -> {
@@ -83,26 +88,26 @@ public class RecipeService {
         return recipeRepository.findById(id);
     }
 
-    @CacheEvict(value = "recipes", allEntries = true)
+    @CacheEvict(value = { "recipes-list", "recipes-page" }, allEntries = true)
     public void deleteRecipe(Long id) {
         recipeRepository.deleteById(id);
     }
 
-    @CacheEvict(value = "recipes", allEntries = true)
+    @CacheEvict(value = { "recipes-list", "recipes-page" }, allEntries = true)
     public Recipe likeRecipe(Long id) {
         recipeRepository.incrementLikes(id);
         return recipeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
     }
 
-    @CacheEvict(value = "recipes", allEntries = true)
+    @CacheEvict(value = { "recipes-list", "recipes-page" }, allEntries = true)
     public Recipe dislikeRecipe(Long id) {
         recipeRepository.incrementDislikes(id);
         return recipeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
     }
 
-    @CacheEvict(value = "recipes", allEntries = true)
+    @CacheEvict(value = { "recipes-list", "recipes-page" }, allEntries = true)
     public Recipe addComment(Long id) {
         recipeRepository.incrementComments(id);
         return recipeRepository.findById(id)

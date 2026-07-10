@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "recipes", indexes = {
@@ -42,20 +45,24 @@ public class Recipe {
     private String category;
 
     @ElementCollection
+    @Fetch(FetchMode.SUBSELECT)
     @NotEmpty
-    private List<String> equipments;
+    private Set<String> equipments = new LinkedHashSet<>();
 
     @ElementCollection
+    @Fetch(FetchMode.SUBSELECT)
     @NotEmpty
-    private List<String> ingredients;
+    private Set<String> ingredients = new LinkedHashSet<>();
 
     @ElementCollection
+    @Fetch(FetchMode.SUBSELECT)
     @NotEmpty
-    private List<String> instructions;
+    private Set<String> instructions = new LinkedHashSet<>();
 
     @ElementCollection
+    @Fetch(FetchMode.SUBSELECT)
     @NotEmpty
-    private List<String> tags;
+    private Set<String> tags = new LinkedHashSet<>();
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long views = 0L;
